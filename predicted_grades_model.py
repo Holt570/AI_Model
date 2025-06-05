@@ -2,15 +2,18 @@ import pandas as pd
 import tkinter as tk
 from tkinter import filedialog, messagebox
 from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import accuracy_score
 from sklearn.preprocessing import LabelEncoder
+
+model = RandomForestRegressor()
+df = pd.DataFrame()
 
 #add funtion
 
 
-# Please add funtion comment
-def load_dataset():
+# Opens a dialog for the user to select a file, then loads the file into a dataframe if the file extension is .csv, .xlsx or .xls
+def load_dataset(df):
     file_path = filedialog.askopenfilename(filetypes=[("CSV files", "*.csv"), ("Excel files", "*.xlsx;*.xls")])
     if file_path:
         try:
@@ -24,13 +27,13 @@ def load_dataset():
             messagebox.showerror("Error", f"Failed to load dataset: {e}")
     return None
 
-# Please add funtion comment
+# Trains the Random Forest Regressor Model using the user input dataset, features and target
 def train_model(df, features, target):
     try:
         X = df[features]
         y = df[target]
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-        model = RandomForestClassifier()
+        model = RandomForestRegressor()
         model.fit(X_train, y_train)
         y_pred = model.predict(X_test)
         accuracy = accuracy_score(y_test, y_pred)
@@ -40,7 +43,7 @@ def train_model(df, features, target):
         messagebox.showerror("Error", f"Failed to train model: {e}")
     return None
 
-# Please add funtion comment
+# Makes prediction for target used in training based on specified features
 def make_predictions(model, df, features):
     try:
         X_new = df[features]
@@ -50,36 +53,36 @@ def make_predictions(model, df, features):
     except Exception as e:
         messagebox.showerror("Error", f"Failed to make predictions: {e}")
 
-# Please add funtion comment
+# Creates GUI window
 root = tk.Tk()
 root.title("Student Predictive Grades")
 
-# Please add funtion comment
-load_button = tk.Button(root, text="Load Dataset", command=lambda: load_dataset())
+# Creates button in GUI that calls load_dataset function
+load_button = tk.Button(root, text="Load Dataset", command=lambda: load_dataset(df))
 load_button.pack(pady=10)
 
-#Please add funtion comment
+# Adds textbox and label for user to specify features
 tk.Label(root, text="Features (comma-separated):").pack()
 features_entry = tk.Entry(root)
 features_entry.pack(pady=5)
 
-# Please add funtion comment
+# Adds textbox and label for user to specify target
 tk.Label(root, text="Target:").pack()
 target_entry = tk.Entry(root)
 target_entry.pack(pady=5)
 
-# Please add funtion comment
+# Creates button in GUI that calls train_model function
 train_button = tk.Button(root, text="Train Model", command=lambda: train_model(df, features_entry.get().split(','), target_entry.get()))
 train_button.pack(pady=10)
 
-# Please add funtion comment
+# Creates button in GUI that calls make_predictions function
 predict_button = tk.Button(root, text="Make Predictions", command=lambda: make_predictions(model, df, features_entry.get().split(',')))
 predict_button.pack(pady=10)
 
-# Please add funtion comment
+# Creates output text box in GUI
 result_text = tk.Text(root, height=20, width=80)
 result_text.pack(pady=10)
 
-# Please add funtion comment
+# Runs GUI on running program
 root.mainloop()
 
