@@ -8,8 +8,9 @@ from sklearn.preprocessing import LabelEncoder
 
 model = RandomForestRegressor()
 df = pd.DataFrame()
+encoder = LabelEncoder()
 
-#add funtion
+# Preprocesses data ready for training and predictions
 def preprocess_data(df):
 
     social_media_mean = df["social_media_hours"].mean()
@@ -47,7 +48,17 @@ def preprocess_data(df):
 
     df.fillna({"study_hours_per_day": 3}, inplace=True)
 
+    df['gender']= encoder.fit_transform(df['gender'])
+    df['part_time_job']= encoder.fit_transform(df['part_time_job'])
+    df['diet_quality']= encoder.fit_transform(df['diet_quality'])
+    df['parental_education_level']= encoder.fit_transform(df['parental_education_level'])
+    df['internet_quality']= encoder.fit_transform(df['internet_quality'])
+    df['extracurricular_participation']= encoder.fit_transform(df['extracurricular_participation'])
+
     result_text.insert(tk.END, f"Cleaning complete.")
+
+    for x in df.index:
+        result_text.insert(tk.END, df.loc[x])
 
     return df
     
