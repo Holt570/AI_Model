@@ -10,7 +10,47 @@ model = RandomForestRegressor()
 df = pd.DataFrame()
 
 #add funtion
+def preprocess_data(df):
 
+    social_media_mean = df["social_media_hours"].mean()
+    netflix_mean = df["netflix_hours"].mean()
+    attendance_mean = df["attendance_percentage"].mean()
+    sleep_mean = df["sleep_hours"].mean()
+    exercise_mean = df["exercise_frequency"].mean()
+    mental_health_mean = df["mental_health_rating"].mean()
+
+    df.fillna({"age": 20}, inplace=True)
+    df.fillna({"gender": "Other"}, inplace=True)
+    df.fillna({"social_media_hours": social_media_mean}, inplace=True)
+    df.fillna({"netflix_hours": netflix_mean}, inplace=True)
+    df.fillna({"part_time_job": "No"}, inplace=True)
+    df.fillna({"attendance_percentage": attendance_mean}, inplace=True)
+    df.fillna({"sleep_hours": sleep_mean}, inplace=True)
+    df.fillna({"diet_quality": "Fair"}, inplace=True)
+    df.fillna({"exercise_frequency": exercise_mean}, inplace=True)
+    df.fillna({"parental_education_level": "High School"}, inplace=True)
+    df.fillna({"internet_quality": "Average"}, inplace=True)
+    df.fillna({"mental_health_rating": mental_health_mean}, inplace=True)
+    df.fillna({"extracurricular_participation": "No"}, inplace=True)
+
+    df.dropna(subset = ["student_id"], inplace = True)
+
+    for x in df.index:
+        if df.loc[x, "study_hours_per_day"] == "varies":
+            df.loc[x, "study_hours_per_day"] = 3
+
+        if df.loc[x, "age"] == "unknown":
+            df.loc[x, "age"] = 20
+
+        if df.loc[x, "exam_score"] > 100:
+            df.loc[x, "exam_score"] = 100
+
+    df.fillna({"study_hours_per_day": 3}, inplace=True)
+
+    result_text.insert(tk.END, f"Cleaning complete.")
+
+    return df
+    
 
 # Opens a dialog for the user to select a file, then loads the file into a dataframe if the file extension is .csv, .xlsx or .xls
 def load_dataset(df):
@@ -21,7 +61,8 @@ def load_dataset(df):
                 df = pd.read_csv(file_path)
             else:
                 df = pd.read_excel(file_path, engine='openpyxl')
-            messagebox.showinfo("Success", "Dataset loaded successfully *but did you check the script!")
+            messagebox.showinfo("Success", "Dataset loaded successfully. Cleaning...")
+            df = preprocess_data(df)
             return df
         except Exception as e:
             messagebox.showerror("Error", f"Failed to load dataset: {e}")
