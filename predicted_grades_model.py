@@ -62,9 +62,15 @@ def preprocess_data(df):
     df['internet_quality']= encoder.fit_transform(df['internet_quality'])
     df['extracurricular_participation']= encoder.fit_transform(df['extracurricular_participation'])
 
-    #scaler.fit(df[["age","gender","study_hours_per_day","social_media_hours","netflix_hours","part_time_job","attendance_percentage","sleep_hours","diet_quality","exercise_frequency","parental_education_level","internet_quality","mental_health_rating","extracurricular_participation"]])
-    #scaled = scaler.fit_transform(df[["age","gender","study_hours_per_day","social_media_hours","netflix_hours","part_time_job","attendance_percentage","sleep_hours","diet_quality","exercise_frequency","parental_education_level","internet_quality","mental_health_rating","extracurricular_participation"]])
-    #normal_df = pd.DataFrame(scaled, columns=["age","gender","study_hours_per_day","social_media_hours","netflix_hours","part_time_job","attendance_percentage","sleep_hours","diet_quality","exercise_frequency","parental_education_level","internet_quality","mental_health_rating","extracurricular_participation"])
+    # columns to be normalised to aviod bias from values on different scales
+    data_to_normalise = ["age","gender","study_hours_per_day","social_media_hours","netflix_hours","part_time_job","attendance_percentage","sleep_hours","diet_quality","exercise_frequency","parental_education_level","internet_quality","mental_health_rating","extracurricular_participation"]
+
+    #create normalised data
+    scaler.fit(df[data_to_normalise])
+    scaled = scaler.fit_transform(df[data_to_normalise])
+
+    #replace relevent columns with normalised data
+    df[data_to_normalise] = pd.DataFrame(scaled, columns=[data_to_normalise])
 
     result_text.insert(tk.END, f"Cleaning complete.")
 
